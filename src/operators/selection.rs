@@ -1,16 +1,14 @@
 // //! 選択に関する処理
 
-// use crate::types::Population;
-
 // /// NSGA-II のバイナリトーナメント選択を行う。
 // ///
 // /// - 2 個体をランダムに抽出し、支配ランクの低い方を選択。
 // /// - ランクが同じ場合はクラウディング距離が大きい方を選択。
-// /// - 上記を `n` 回繰り返して新しい `Population` を構成する。
+// /// - 上記を `n` 回繰り返して新しい `Vec<Individual>` を構成する。
 // pub fn binary_tournament_nsga2(
-//     population: &Population,
+//     population: &Vec<Individual>,
 //     n: usize,
-// ) -> Population {
+// ) -> Vec<Individual> {
 //     assert!(n > 2, "トーナメント回数は 2 以上でなけらばならない");
 //     // 2個体をランク優先（同ランク時はクラウディング距離）で選ぶバイナリトーナメント
 //     (0..n)
