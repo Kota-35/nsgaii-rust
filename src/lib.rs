@@ -1,3 +1,3 @@
-mod individual;
-mod operators;
-mod population;
+pub mod individual;
+pub mod operators;
+pub mod population;
