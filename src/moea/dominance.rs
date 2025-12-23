@@ -1,6 +1,6 @@
 //! 優越関係判定
 
-use crate::types::{Individual, Population};
+use crate::types::Individual;
 
 /// 支配関係を判定する
 /// 個体Aが個体Bを支配する場合true
@@ -26,7 +26,7 @@ pub fn is_dominated_by(a: &Individual, b: &Individual) -> bool {
 /// 単一個体に対する支配カウント(何個の個体に支配されているか)
 pub fn count_dominators(
     ind: &Individual,
-    population: &Population,
+    population: &Vec<Individual>,
 ) -> usize {
     population
         .iter()
@@ -35,7 +35,7 @@ pub fn count_dominators(
 }
 
 /// 第1フロントを見つける(どの個体にも支配されない個体の集合)
-pub fn find_first_front(population: &Population) -> Population {
+pub fn find_first_front(population: &Vec<Individual>) -> Vec<Individual> {
     population
         .iter()
         .filter(|ind| count_dominators(ind, population) == 0usize)
@@ -45,9 +45,9 @@ pub fn find_first_front(population: &Population) -> Population {
 
 /// 指定されたフロントを除いた残りの個体を返す
 pub fn remove_individuals(
-    population: &Population,
-    front: &Population,
-) -> Population {
+    population: &Vec<Individual>,
+    front: &Vec<Individual>,
+) -> Vec<Individual> {
     population
         .iter()
         .filter(|ind| !front.contains(ind))
