@@ -1,6 +1,6 @@
 //! 交叉に関する処理
 
-use crate::individual::Individual;
+use crate::types::Individual;
 
 /// 1点交叉を行う。
 ///
@@ -15,13 +15,10 @@ fn one_point_crossover(
     parent2: &Individual,
     point: usize,
 ) -> (Individual, Individual) {
-    let (p1_left, p1_right) = parent1.variables.split_at(point);
-    let (p2_left, p2_right) = parent2.variables.split_at(point);
+    let (p1_left, p1_right) = parent1.split_at(point);
+    let (p2_left, p2_right) = parent2.split_at(point);
 
-    return (
-        Individual::new([p1_left, p2_right].concat()),
-        Individual::new([p2_left, p1_right].concat()),
-    );
+    return ([p1_left, p2_right].concat(), [p2_left, p1_right].concat());
 }
 
 /// ランダムな点で1点交叉を行う
@@ -36,7 +33,7 @@ pub fn one_point_crossover_random(
     parent1: &Individual,
     parent2: &Individual,
 ) -> (Individual, Individual) {
-    let len = parent1.variables.len().min(parent2.variables.len());
+    let len = parent1.len().min(parent2.len());
     let point = rand::random_range(0..len);
 
     return one_point_crossover(parent1, parent2, point);
@@ -44,13 +41,14 @@ pub fn one_point_crossover_random(
 
 #[cfg(test)]
 mod tests {
+    use crate::types::Individual;
+
     use super::one_point_crossover;
-    use crate::individual::Individual;
 
     fn create_parent() -> (Individual, Individual) {
         return (
-            Individual::new(vec![1, 2, 3, 4, 5, 6, 7, 8]),
-            Individual::new(vec![9, 8, 7, 6, 5, 4, 3, 2]),
+            vec![1, 2, 3, 4, 5, 6, 7, 8],
+            vec![9, 8, 7, 6, 5, 4, 3, 2],
         );
     }
 
@@ -60,8 +58,8 @@ mod tests {
         let (child1, child2) = one_point_crossover(&parent1, &parent2, 0);
 
         // 交叉点が0の場合、すべて入れ替わる
-        assert_eq!(child1.variables, vec![9, 8, 7, 6, 5, 4, 3, 2]);
-        assert_eq!(child2.variables, vec![1, 2, 3, 4, 5, 6, 7, 8]);
+        assert_eq!(child1, vec![9, 8, 7, 6, 5, 4, 3, 2]);
+        assert_eq!(child2, vec![1, 2, 3, 4, 5, 6, 7, 8]);
     }
 
     #[test]
@@ -74,8 +72,8 @@ mod tests {
         // parent2: [9,8,7,6 | 5,4,3,2]
         // child1: [1,2,3,4,5,4,3,2]
         // child2: [9,8,7,6,5,6,7,8]
-        assert_eq!(child1.variables, vec![1, 2, 3, 4, 5, 4, 3, 2]);
-        assert_eq!(child2.variables, vec![9, 8, 7, 6, 5, 6, 7, 8]);
+        assert_eq!(child1, vec![1, 2, 3, 4, 5, 4, 3, 2]);
+        assert_eq!(child2, vec![9, 8, 7, 6, 5, 6, 7, 8]);
     }
 
     #[test]
@@ -84,21 +82,21 @@ mod tests {
         let (child1, child2) = one_point_crossover(&parent1, &parent2, 8);
 
         // 交叉点が最後の場合、入れ替わらない
-        assert_eq!(child1.variables, vec![1, 2, 3, 4, 5, 6, 7, 8]);
-        assert_eq!(child2.variables, vec![9, 8, 7, 6, 5, 4, 3, 2]);
+        assert_eq!(child1, vec![1, 2, 3, 4, 5, 6, 7, 8]);
+        assert_eq!(child2, vec![9, 8, 7, 6, 5, 4, 3, 2]);
     }
 
     #[test]
     fn test_one_point_crossover_different_lengths() {
-        let parent1 = Individual::new(vec![1, 2, 3]);
-        let parent2 = Individual::new(vec![4, 5, 6, 7, 8]);
+        let parent1 = vec![1, 2, 3];
+        let parent2 = vec![4, 5, 6, 7, 8];
         let (child1, child2) = one_point_crossover(&parent1, &parent2, 2);
 
         // parent1: [1,2 | 3]
         // parent2: [4,5 | 6,7,8]
         // child1: [1,2,6,7,8]
         // child2: [4,5,3]
-        assert_eq!(child1.variables, vec![1, 2, 6, 7, 8]);
-        assert_eq!(child2.variables, vec![4, 5, 3]);
+        assert_eq!(child1, vec![1, 2, 6, 7, 8]);
+        assert_eq!(child2, vec![4, 5, 3]);
     }
 }

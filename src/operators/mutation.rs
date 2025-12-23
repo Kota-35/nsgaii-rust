@@ -1,4 +1,4 @@
-use crate::individual::Individual;
+use crate::types::Individual;
 
 /// ビット反転突然変異
 
@@ -20,11 +20,8 @@ fn mutate_bit(prob: f64, bit: &u8) -> u8 {
 }
 
 /// Individualに突然変異を適応する
-fn bit_flip_mutation(prob: f64, ind: Individual) -> Vec<u8> {
-    ind.variables
-        .iter()
-        .map(|bit| mutate_bit(prob, bit))
-        .collect()
+fn bit_flip_mutation(prob: f64, ind: &Individual) -> Vec<u8> {
+    ind.iter().map(|bit| mutate_bit(prob, bit)).collect()
 }
 
 // /// 複数の個体に突然変異を適用する
