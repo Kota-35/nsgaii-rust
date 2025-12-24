@@ -5,6 +5,8 @@ use std::{
     path::{Path, PathBuf},
 };
 
+use crate::individual::{Individual, Objectives};
+
 #[derive(Debug)]
 pub struct MKP {
     /// 目的関数の数
@@ -158,5 +160,30 @@ impl MKP {
                     }
                 },
             )
+    }
+}
+
+/// 適合度を計算する
+pub fn fit_mkp(mkp: &MKP, x: &Individual) -> Objectives {
+    // 各目的関数の利益を計算
+    let f: Vec<f64> = (0..mkp.number_of_obj)
+        .map(|k| {
+            (0..x.len())
+                .map(|i| mkp.profit[k][i] as f64 * x[i] as f64)
+                .sum()
+        })
+        .collect();
+
+    // 重さの合計を計算
+    let total_weight: usize =
+        (0..x.len()).map(|i| mkp.weight[i] * x[i] as usize).sum();
+
+    // 容量制約違反のペナルティ
+    if total_weight > mkp.capacity {
+        // 制約違反時は、すべての目的関数値を -(totalWeight - capacity) に設定
+        let penalty = -((total_weight - mkp.capacity) as f64);
+        vec![penalty; mkp.number_of_obj]
+    } else {
+        f
     }
 }
