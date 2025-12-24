@@ -1,3 +1,4 @@
+pub mod individual;
 pub mod moea;
 pub mod operators;
-pub mod types;
+pub mod problems;
